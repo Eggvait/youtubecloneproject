@@ -1,10 +1,10 @@
 
 import './App.css';
-
+import Navbar from ',/Component/Navbar/navbar';
 function App() {
   return (
     <div className="App">
-      We are ready to start our Youtube Clone Project in MERN!
+      <Navbar />
     </div>
   );
 }
