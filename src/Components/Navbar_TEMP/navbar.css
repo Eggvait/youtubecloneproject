@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap');
+
+.navbar{
+    height:56 px;
+    box-sizing: border-box;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+    top:0;
+    position: fixed;
+    background-color: #000000;
+    z-index: 10;
+}
+
+.navbar-left{
+    gap: 10 px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+}
+
+.navbarHamberger{
+    width:40px;
+    height:40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.navbar_youtubeimg{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    color: white;
+    text-decoration: none;
+}
+
+.navbar_youtubeimage{
+    color: red;
+}
+
+.navbar_utubeTitle{
+    font-size: 20px;
+    word-spacing: 0px;
+    letter-spacing: 0px;
+    font-family: "Lora", serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
+}
