@@ -1,6 +1,8 @@
 
 import './App.css';
-import Navbar from ',/Component/Navbar/navbar';
+import Navbar from './Components/Navbar/navbar';
+
+
 function App() {
   return (
     <div className="App">
