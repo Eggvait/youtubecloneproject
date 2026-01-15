@@ -1,38 +1,43 @@
-import React, { useEffect, useState } from 'react'
-import './login.css'
+import React, { useEffect, useState } from "react";
+import "./login.css";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
+
 
 const Login = ({ onClose }) => {
-  const [isClosing, setIsClosing] = useState(false)
-  const [rememberMe, setRememberMe] = useState(false)
+  const [isClosing, setIsClosing] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const navigate = useNavigate();
 
   // Lock scroll + ESC close
   useEffect(() => {
-    document.body.style.overflow = 'hidden'
+    document.body.style.overflow = "hidden";
 
     const handleEsc = (e) => {
-      if (e.key === 'Escape') handleClose()
-    }
+      if (e.key === "Escape") handleClose();
+    };
 
-    window.addEventListener('keydown', handleEsc)
+    window.addEventListener("keydown", handleEsc);
 
     return () => {
-      document.body.style.overflow = 'auto'
-      window.removeEventListener('keydown', handleEsc)
-    }
-  }, [])
+      document.body.style.overflow = "auto";
+      window.removeEventListener("keydown", handleEsc);
+    };
+  }, []);
 
   const handleClose = () => {
-    setIsClosing(true)
-    setTimeout(onClose, 220) // ⬅️ match CSS exit animation
-  }
+    setIsClosing(true);
+    setTimeout(onClose, 220); // ⬅️ match CSS exit animation
+  };
 
   return (
     <div
-      className={`loginOverlay ${isClosing ? 'fadeOut' : ''}`}
+      className={`loginOverlay ${isClosing ? "fadeOut" : ""}`}
       onClick={handleClose}
     >
       <div
-        className={`loginModal ${isClosing ? 'scaleOut' : ''}`}
+        className={`loginModal ${isClosing ? "scaleOut" : ""}`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="loginHeader">
@@ -60,11 +65,22 @@ const Login = ({ onClose }) => {
 
         <div className="loginActions">
           <button className="loginPrimary">Sign in</button>
-          <button className="loginSecondary">Create account</button>
+          <button
+            className="loginSecondary"
+            onClick={() => {
+              setIsClosing(true);
+              setTimeout(() => {
+                onClose();
+                navigate("/signup");
+              }, 220); // match exit animation
+            }}
+          >
+            Create account
+          </button>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;
