@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import './video.css'
 import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined'
 import ThumbDownAltOutlinedIcon from '@mui/icons-material/ThumbDownAltOutlined'
+import { Link } from 'react-router-dom'
 
 const Video = () => {
   const [showMore, setShowMore] = useState(false)
@@ -31,11 +32,13 @@ const Video = () => {
           {/* ACTION BAR */}
           <div className="videoActions">
             <div className="videoActions_left">
-              <img
-                src="https://i.pinimg.com/564x/4a/5a/47/4a5a474b6f42f265d7f003575ef34b75.jpg"
-                alt=""
-                className="videoChannelImg"
-              />
+              <Link to="/user/3434" className="imagechannellinkclick">
+                <img
+                  src="https://i.pinimg.com/564x/4a/5a/47/4a5a474b6f42f265d7f003575ef34b75.jpg"
+                  alt=""
+                  className="videoChannelImg"
+                />
+              </Link>
               <div className="videoChannelInfo">
                 <div className="videoChannelName">User1</div>
                 <div className="videoChannelSubs">1.2M subscribers</div>

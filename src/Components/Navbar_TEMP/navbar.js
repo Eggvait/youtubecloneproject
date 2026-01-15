@@ -8,11 +8,12 @@ import VideoCallIcon from '@mui/icons-material/VideoCall';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import PersonIcon from '@mui/icons-material/Person';
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = ({ setSideNavbarFunc, sideNavbar }) => {
   const[userPic, setUserPic] = useState("https://icon-library.com/images/user-icon-jpg/user-icon-jpg-29.jpg");
   const[navbarModal, setNavbarModal] = useState(false);
+  const navigate = useNavigate();
   
   const handleClickModal = () => {
     setNavbarModal(prev => !prev);
@@ -20,6 +21,11 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar }) => {
 
   const sideNavbarFunc = () => {
     setSideNavbarFunc(!sideNavbar);
+  }
+
+  const handleProfile = () => {
+    navigate("/user/324243");
+    setNavbarModal(false);
   }
 
   return <div className="navbar">
@@ -52,7 +58,7 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar }) => {
 
       { navbarModal && 
       <div className= 'navbar-modal'>
-        <div className = "navbar-modal-option">Profile</div>
+        <div className = "navbar-modal-option" onClick = {handleProfile}>Profile</div>
         <div className = "navbar-modal-option">Logout</div>
         <div className = "navbar-modal-option">Login</div>
       </div>
