@@ -54,7 +54,7 @@ const HomePage = ({ sideNavbar }) => {
 
               <div className="youtube_textInfo">
                 <div className="youtube_videoTitle">
-                  Does He Know Something We Don’t?
+                  This Video Title Is Intentionally Made Very Very Long So That It Overflows And Gets Clamped Properly
                 </div>
                 <div className="youtube_channelName">Channel Name</div>
                 <div className="youtube_videoMeta">1.2M views • 3 days ago</div>

@@ -13,10 +13,12 @@ import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined'
 import ContentCutIcon from '@mui/icons-material/ContentCut'
 
 const SideNavbar = ({ sideNavbar }) => {
-  if (!sideNavbar) return null   // ✅ cleaner than display:none
-
   return (
-    <div className="home-sideNavbar">
+    <div
+      className={`home-sideNavbar ${
+        sideNavbar ? 'sidebar-open' : 'sidebar-closed'
+      }`}
+    >
       {/* TOP */}
       <div className="home_sideNavberTop">
         <div className="home_sideNavbarTopOption">
