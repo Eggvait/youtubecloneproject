@@ -9,12 +9,14 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import PersonIcon from "@mui/icons-material/Person";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Login from "../Login/login";
 
 const Navbar = ({ setSideNavbarFunc, sideNavbar }) => {
   const [userPic, setUserPic] = useState(
     "https://icon-library.com/images/user-icon-jpg/user-icon-jpg-29.jpg"
   );
   const [navbarModal, setNavbarModal] = useState(false);
+  const [login,setLogin] = useState(false);
   const navigate = useNavigate();
 
   const handleClickModal = () => {
@@ -28,6 +30,20 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar }) => {
   const handleProfile = () => {
     navigate("/user/324243");
     setNavbarModal(false);
+  };
+
+  const onClickofPopupOption = (button) => {
+    setNavbarModal(false);
+    if(button === "login"){
+      setLogin(true);
+    }
+    else{
+
+    }
+  };
+
+  const closeLogin = () => {
+    setLogin(false);
   };
 
   return (
@@ -82,11 +98,15 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar }) => {
             <div className="navbar-modal-option" onClick={handleProfile}>
               Profile
             </div>
-            <div className="navbar-modal-option">Logout</div>
-            <div className="navbar-modal-option">Login</div>
+            <div className="navbar-modal-option" onClick ={()=>onClickofPopupOption("logout")}>Logout</div>
+            <div className="navbar-modal-option" onClick ={()=>onClickofPopupOption("login")}>Login</div>
           </div>
         )}
       </div>
+
+      {
+        login && <Login onClose={closeLogin} />
+      }
     </div>
   );
 };
