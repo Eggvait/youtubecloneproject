@@ -6,6 +6,7 @@ import { Route, Routes } from "react-router-dom";
 import Video from "./Pages/Video/video";
 import Profile from "./Pages/Profile/profile";
 import SideNavbar from "./Components/SideNavbar/sideNavbar_TEMP";
+import VideoUpload from "./Pages/VideoUpload/videoUpload";
 
 function App() {
   const [sideNavbar, setSideNavbar] = useState(true);
@@ -28,6 +29,7 @@ function App() {
             </div>
           }
         />
+        <Route path='/:id/upload' element={<VideoUpload />} />
       </Routes>
     </div>
   );
