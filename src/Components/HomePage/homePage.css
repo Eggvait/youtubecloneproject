@@ -1,43 +1,195 @@
-.homePage{
+/* =====================================================
+   HOMEPAGE CONTAINER
+   ===================================================== */
+
+.homePage {
     display: flex;
     flex-direction: column;
-    overflow-x: hidden;
-    flex: 1;
-    margin-left: 270px;
+    flex: 1;              /* fills space next to sidebar */
     min-height: 100vh;
+    width: 100%;
 }
 
+
+/* =====================================================
+   OPTIONS BAR (FIXED)
+   ===================================================== */
+
 .homePage_options {
-    display: flex;
     position: fixed;
-    top: 56px;
-    left: 270px;                 
-    width: calc(100% - 270px);   
-    z-index: 1;
-    gap: 10px;
+    top: 56px;                  /* below top navbar */
     height: 56px;
+    background-color: black;
+    z-index: ;                /* above sidebar */
+    overflow: hidden;
+    box-sizing: border-box;
+    transition: left 0.2s ease, width 0.2s ease;
+}
+
+/* Sidebar OPEN */
+.homePage_options.withSidebar {
+    left: 270px;
+    width: calc(100% - 270px);
+}
+
+/* Sidebar CLOSED */
+.homePage_options.noSidebar {
+    left: 0;
+    width: 100%;
+}
+
+
+/* =====================================================
+   OPTIONS SCROLLER (ONLY THIS SCROLLS)
+   ===================================================== */
+
+.optionsScroller {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 100%;
     padding: 10px;
     overflow-x: auto;
-    background-color: black;
+    overflow-y: hidden;
+    white-space: nowrap;
     box-sizing: border-box;
 }
 
-.homePage_options::-webkit-scrollbar {
-    width: 12px;
+.optionsScroller::-webkit-scrollbar {
+    height: 6px;
+}
+
+.optionsScroller::-webkit-scrollbar-thumb {
+    background-color: #555;
+    border-radius: 10px;
 }
 
 
+/* =====================================================
+   EDGE GRADIENTS (STAY FIXED)
+   ===================================================== */
 
-.homepage_option{
+.homePage_options::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 40px;
+    height: 100%;
+    background: linear-gradient(to left, black, transparent);
+    pointer-events: none;
+}
+
+.homePage_options::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 24px;
+    height: 100%;
+    background: linear-gradient(to right, black, transparent);
+    pointer-events: none;
+}
+
+
+/* =====================================================
+   OPTION CHIP
+   ===================================================== */
+
+.homepage_option {
     flex: 0 0 auto;
     height: 30px;
-    padding: 1px 10px;
-    background-color: rgb(42,42,42);
-    color: #FFFFFF;
+    padding: 1px 12px;
+    background-color: rgb(42, 42, 42);
+    color: #ffffff;
     font-weight: 600;
     border-radius: 5px;
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     cursor: pointer;
+    user-select: none;
 }
+
+.homepage_option:hover {
+    background-color: rgb(60, 60, 60);
+}
+
+/* =====================================================
+   MAIN PAGE GRID
+   ===================================================== */
+.home_mainPage {
+    display: grid;
+    gap: 16px;
+    padding-top: 112px;
+    padding-left: 24px;
+    padding-right: 24px;
+    padding-bottom: 24px;
+    row-gap: 32px;
+    column-gap: 16px;
+
+    width: 100%;
+    box-sizing: border-box;
+
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+}
+
+
+/* =====================================================
+   VIDEO CARD
+   ===================================================== */
+
+.youtube_Video {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    color: white;
+    text-decoration: none;
+}
+
+.youtube_thumbnailBox {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    position: relative;
+}
+
+.youtube_thumbnailPic {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.youtube_videoInfo {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.youtube_channelIcon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.youtube_textInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.youtube_videoTitle {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+    max-height: 2.8em;   /* 2 lines */
+    overflow: hidden;
+}
+
+.youtube_channelName,
+.youtube_videoMeta {
+    font-size: 12px;
+    color: #aaa;
+}
+

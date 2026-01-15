@@ -1,6 +1,9 @@
-.home {
+.Home {
     display: flex;
     width: 100%;
-    padding: 10px 13px 0 13px;
     box-sizing: border-box;
+
+    /* ✅ THIS IS THE FIX */
+    background-color: black;
+    min-height: 100vh;
 }
