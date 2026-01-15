@@ -1,26 +1,48 @@
 import React, { useState } from "react";
 import "./signUp.css";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const SignUp = () => {
   const navigate = useNavigate();
   const [preview, setPreview] = useState(null);
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setPreview(URL.createObjectURL(file));
-    }
-  };
+  const [uploading, setUploading] = useState(false);
 
   const [signUpField, setSignUpField] = useState({
     channelName: "",
     username: "",
     password: "",
     about: "",
-    profileImage: "",
+    profileImage: null,
+    profileImageUrl: "",
   });
-  console.log(signUpField);
+
+  // 🔹 Upload image to Cloudinary (TEST MODE)
+  const uploadImage = async (file) => {
+    try {
+      setUploading(true);
+
+      const data = new FormData();
+      data.append("file", file);
+      data.append("upload_preset", "youtube-clone");
+
+      const res = await axios.post(
+        "https://api.cloudinary.com/v1_1/du0hnwxpb/image/upload",
+        data
+      );
+
+      console.log("UPLOAD SUCCESS:", res.data.secure_url);
+
+      setSignUpField((prev) => ({
+        ...prev,
+        profileImageUrl: res.data.secure_url,
+      }));
+    } catch (err) {
+      console.error("UPLOAD FAILED:", err.response?.data || err);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   return (
     <div className="signUpPage">
@@ -38,36 +60,38 @@ const SignUp = () => {
         <div className="signUpBody">
           <input
             type="text"
+            placeholder="Channel name"
             value={signUpField.channelName}
             onChange={(e) =>
               setSignUpField({ ...signUpField, channelName: e.target.value })
             }
-            placeholder="Channel name"
           />
+
           <input
             type="text"
+            placeholder="Username"
             value={signUpField.username}
             onChange={(e) =>
               setSignUpField({ ...signUpField, username: e.target.value })
             }
-            placeholder="Username"
           />
+
           <input
             type="password"
+            placeholder="Password"
             value={signUpField.password}
             onChange={(e) =>
               setSignUpField({ ...signUpField, password: e.target.value })
             }
-            placeholder="Password"
           />
 
           <textarea
+            rows={3}
+            placeholder="About your channel"
             value={signUpField.about}
             onChange={(e) =>
               setSignUpField({ ...signUpField, about: e.target.value })
             }
-            placeholder="About your channel"
-            rows={3}
           />
 
           {/* PROFILE IMAGE */}
@@ -81,18 +105,26 @@ const SignUp = () => {
             </div>
 
             <label className="uploadBtn">
-              Upload profile picture
+              {uploading ? "Uploading..." : "Upload profile picture"}
               <input
                 type="file"
                 accept="image/*"
                 hidden
-                value={signUpField.profileImage}
                 onChange={(e) => {
-                  handleImageChange(e);
-                  setSignUpField({
-                    ...signUpField,
-                    profileImage: e.target.value,
-                  });
+                  const file = e.target.files[0];
+                  if (!file) return;
+
+                  // preview
+                  setPreview(URL.createObjectURL(file));
+
+                  // store file
+                  setSignUpField((prev) => ({
+                    ...prev,
+                    profileImage: file,
+                  }));
+
+                  // 🚀 upload immediately (TEST MODE)
+                  uploadImage(file);
                 }}
               />
             </label>
