@@ -7,6 +7,8 @@ import { Link } from 'react-router-dom'
 const Video = () => {
   const [showMore, setShowMore] = useState(false)
   const [commentFocus, setCommentFocus] = useState(false)
+  const [comment, setComment] = useState("");
+  console.log(comment);
 
   return (
     <div className="videoPage">
@@ -88,6 +90,8 @@ const Video = () => {
                 <input
                   type="text"
                   placeholder="Add a comment..."
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
                   onFocus={() => setCommentFocus(true)}
                 />
                 {commentFocus && (

@@ -5,6 +5,14 @@ import { Link } from "react-router-dom";
 const VideoUpload = () => {
   const [thumbnailName, setThumbnailName] = useState("");
   const [videoName, setVideoName] = useState("");
+  const [uploadField, setUploadField] = useState({
+    title: "",
+    description: "",
+    category: "",
+    thumbnail: null,
+    video: null,
+  });
+  console.log(uploadField);
 
   return (
     <div className="uploadPage">
@@ -22,17 +30,33 @@ const VideoUpload = () => {
         <div className="uploadForm">
           <input
             type="text"
+            value={uploadField.title}
+            onChange={(e) =>
+              setUploadField({ ...uploadField, title: e.target.value })
+            }
             placeholder="Title of video"
             className="uploadInput"
           />
 
           <textarea
+            value={uploadField.description}
+            onChange={(e) =>
+              setUploadField({ ...uploadField, description: e.target.value })
+            }
             placeholder="Description"
             rows="4"
             className="uploadTextarea"
           />
 
-          <input type="text" placeholder="Category" className="uploadInput" />
+          <input
+            type="text"
+            value={uploadField.category}
+            onChange={(e) =>
+              setUploadField({ ...uploadField, category: e.target.value })
+            }
+            placeholder="Category"
+            className="uploadInput"
+          />
 
           {/* FILE INPUTS */}
           <div className="uploadFileRow">
@@ -43,9 +67,16 @@ const VideoUpload = () => {
               <input
                 type="file"
                 hidden
-                onChange={(e) =>
-                  setThumbnailName(e.target.files[0]?.name || "")
-                }
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+
+                  setThumbnailName(file?.name || "");
+                  setUploadField((prev) => ({
+                    ...prev,
+                    thumbnail: file,
+                  }));
+                }}
               />
             </label>
 
@@ -60,7 +91,16 @@ const VideoUpload = () => {
               <input
                 type="file"
                 hidden
-                onChange={(e) => setVideoName(e.target.files[0]?.name || "")}
+                accept="video/*"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+
+                  setVideoName(file?.name || "");
+                  setUploadField((prev) => ({
+                    ...prev,
+                    video: file,
+                  }));
+                }}
               />
             </label>
 

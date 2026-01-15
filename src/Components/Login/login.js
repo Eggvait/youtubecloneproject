@@ -9,6 +9,8 @@ const Login = ({ onClose }) => {
   const [isClosing, setIsClosing] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
+  const [loginField, setLoginField] = useState({"username": "", "password": ""});
+  console.log(loginField);
 
   // Lock scroll + ESC close
   useEffect(() => {
@@ -31,6 +33,10 @@ const Login = ({ onClose }) => {
     setTimeout(onClose, 220); // ⬅️ match CSS exit animation
   };
 
+  const handleOnChangeInput = (event, name) => {
+    setLoginField({...loginField, [name]: event.target.value});
+  }
+
   return (
     <div
       className={`loginOverlay ${isClosing ? "fadeOut" : ""}`}
@@ -49,8 +55,8 @@ const Login = ({ onClose }) => {
         </div>
 
         <div className="loginBody">
-          <input type="text" placeholder="Username or email" />
-          <input type="password" placeholder="Password" />
+          <input type="text" value={loginField.username} onChange={(e)=>handleOnChangeInput(e,"username")} placeholder="Username or email" />
+          <input type="password" value={loginField.password} onChange={(e)=>handleOnChangeInput(e,"password")} placeholder="Password" />
 
           {/* ✅ REMEMBER ME */}
           <label className="rememberRow">
