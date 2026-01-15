@@ -1,0 +1,367 @@
+/* PAGE */
+.videoPage {
+  margin-top: 56px;                 /* navbar offset */
+  min-height: calc(100vh - 56px);
+  background-color: black;
+  color: white;
+  display: flex;
+  justify-content: center;
+}
+
+/* CONSTRAINED LAYOUT (like YouTube) */
+.videoLayout {
+  display: flex;
+  gap: 24px;
+  width: 100%;
+  max-width: 1600px;
+  padding: 24px;
+}
+
+/* LEFT COLUMN */
+.videoMain {
+  flex: 1;
+  max-width: 1280px;                /* ⬅️ BIGGER VIDEO */
+}
+
+/* VIDEO */
+.videoPlayer_video {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+}
+
+/* TITLE */
+.videoTitle {
+  margin-top: 16px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* ACTION BAR */
+.videoActions {
+  margin-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.videoActions_left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.videoChannelImg {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.videoChannelName {
+  font-weight: 500;
+}
+
+.videoChannelSubs {
+  font-size: 12px;
+  color: gray;
+}
+
+.subscribeBtn {
+  background-color: white;
+  color: black;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 18px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* LIKE UI — UNTOUCHED */
+.youtube_video_likeBlock {
+  display: flex;
+  align-items: center;
+  background-color: #2a2a2a;
+  padding: 6px 10px;
+  border-radius: 18px;
+  cursor: pointer;
+}
+
+.youtube_video_likeIcon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.youtubevideoNoOfLikes {
+  font-size: 14px;
+}
+
+.youtubeVideoDivider {
+  width: 1px;
+  height: 20px;
+  background-color: #555;
+  margin: 0 8px;
+}
+
+/* DESCRIPTION */
+.videoDescription {
+  margin-top: 16px;
+  background-color: #1f1f1f;
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.videoDescription_stats {
+  font-size: 13px;
+  color: gray;
+  margin-bottom: 6px;
+}
+
+.videoDescription p {
+  font-size: 14px;
+}
+
+.clamped {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.readMore {
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* COMMENTS */
+.videoComments {
+  margin-top: 24px;
+}
+
+.commentInput {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.commentBox {
+  flex: 1;
+}
+
+.commentBox input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #555;
+  color: white;
+  padding: 6px 0;
+}
+
+.commentActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.cancelBtn {
+  background: none;
+  border: none;
+  color: #aaa;
+  cursor: pointer;
+}
+
+.commentBtn {
+  background-color: #3ea6ff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 18px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* SINGLE COMMENT */
+.comment {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.comment img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+/* RIGHT COLUMN */
+.videoSuggestions {
+  width: 360px;
+  flex-shrink: 0;
+}
+
+.videoSuggestions h4 {
+  margin-bottom: 12px;
+}
+
+.suggestionCard {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  cursor: pointer;
+}
+
+.suggestionCard img {
+  width: 168px;
+  height: 94px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.suggestionTitle {
+  font-size: 14px;
+  font-weight: 500;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.suggestionMeta {
+  font-size: 12px;
+  color: gray;
+}
+
+.videoPlayer_video:hover {
+  filter: brightness(1.05);
+}
+
+.suggestionCard:hover {
+  background-color: rgba(255,255,255,0.04);
+  border-radius: 8px;
+}
+
+.subscribeBtn:hover {
+  background-color: #e6e6e6;
+}
+
+.subscribeBtn:active {
+  transform: scale(0.96);
+}
+
+.commentBox input:focus {
+  border-bottom: 2px solid #3ea6ff;
+}
+
+.commentBtn {
+  transition: background-color 0.2s ease;
+}
+
+.commentBtn:hover {
+  background-color: #65b7ff;
+}
+
+.suggestionTitle {
+  font-size: 13.5px;
+  line-height: 1.3;
+}
+
+.videoChannelName {
+  color: #fff;
+}
+
+.videoChannelSubs,
+.suggestionMeta {
+  color: #aaa;
+}
+
+.videoTitle {
+  line-height: 1.25;
+}
+
+.videoDescription p {
+  line-height: 1.4;
+}
+
+.videoSuggestions {
+  position: sticky;
+  top: 80px;
+}
+
+.videoPage {
+  padding: 24px 32px;
+  gap: 32px;
+}
+
+.videoMain {
+  max-width: 1100px;
+}
+
+.videoPlayer {
+  margin-bottom: 16px;
+}
+
+.videoPlayer_video {
+  border-radius: 12px;
+}
+
+.videoTitle {
+  margin-top: 8px;
+  margin-bottom: 12px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.videoActions {
+  margin-top: 8px;
+  padding-bottom: 12px;
+}
+
+.videoDescription {
+  margin-top: 12px;
+  padding: 12px 14px;
+}
+
+.videoComments {
+  margin-top: 24px;
+}
+
+.videoComments h3 {
+  margin-bottom: 16px;
+}
+
+.commentInput {
+  margin-bottom: 24px;
+}
+
+.commentBox input {
+  padding-bottom: 6px;
+}
+
+.comment {
+  margin-top: 16px;
+}
+
+.commentText {
+  margin-top: 4px;
+  font-size: 14px;
+}
+
+.videoSuggestions {
+  width: 402px;
+}
+
+.suggestionCard {
+  padding: 6px;
+  gap: 12px;
+}
+
+/* ===============================
+   STICKY "UP NEXT" (YouTube-like)
+================================ */
+
+.videoSuggestions {
+  position: sticky;
+  top: 80px;              /* navbar (56) + spacing */
+  align-self: flex-start; /* critical for flex layouts */
+}
