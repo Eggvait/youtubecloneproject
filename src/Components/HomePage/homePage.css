@@ -6,3 +6,38 @@
     margin-left: 270px;
     min-height: 100vh;
 }
+
+.homePage_options {
+    display: flex;
+    position: fixed;
+    top: 56px;
+    left: 270px;                 
+    width: calc(100% - 270px);   
+    z-index: 1;
+    gap: 10px;
+    height: 56px;
+    padding: 10px;
+    overflow-x: auto;
+    background-color: black;
+    box-sizing: border-box;
+}
+
+.homePage_options::-webkit-scrollbar {
+    width: 12px;
+}
+
+
+
+.homepage_option{
+    flex: 0 0 auto;
+    height: 30px;
+    padding: 1px 10px;
+    background-color: rgb(42,42,42);
+    color: #FFFFFF;
+    font-weight: 600;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
