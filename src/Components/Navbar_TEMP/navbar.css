@@ -75,7 +75,7 @@
     color: white;
     font-size: 16px;
     padding-left: 30px;
-    &::focus{
+    & ::focus{
         outline: none;
     }
     & ::placeholder{
@@ -105,4 +105,35 @@
     width: 40px;
     height: 40px;
     cursor: pointer;
+}
+
+.navbar-right{
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.navbar-right-logo{
+    width: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.navbar-modal{
+    width: 100%;
+    position: absolute;
+    top: 35px;
+    z-index: 20;
+    color: white;
+}
+
+.navbar-modal-option{
+    background-color: rgb(85, 85, 85);
+    padding: 10px;
+    cursor: pointer;
+    &:hover{
+        background-color: rgb(34, 33, 33);
+    }
 }
