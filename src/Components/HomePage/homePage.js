@@ -1,5 +1,6 @@
 import React from 'react'
 import './homePage.css'
+import { Link } from 'react-router-dom'
 
 const HomePage = ({ sideNavbar }) => {
 
@@ -38,7 +39,7 @@ const HomePage = ({ sideNavbar }) => {
       {/* ================= MAIN CONTENT ================= */}
       <div className="home_mainPage">
         {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} className="youtube_Video">
+          <Link to={"/watch/9897"} key={i} className="youtube_Video">
             <div className="youtube_thumbnailBox">
               <img
                 src="https://i.ytimg.com/vi/bIsp1K8eJG0/maxresdefault.jpg"
@@ -60,7 +61,7 @@ const HomePage = ({ sideNavbar }) => {
                 <div className="youtube_videoMeta">1.2M views • 3 days ago</div>
               </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
 
