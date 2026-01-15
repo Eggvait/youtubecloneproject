@@ -120,12 +120,14 @@ const Video = () => {
         <div className="videoSuggestions">
           <h4>Up next</h4>
 
-          {[1, 2, 3, 4].map(i => (
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => (
             <div key={i} className="suggestionCard">
-              <img
-                src="https://i.ytimg.com/vi/bIsp1K8eJG0/maxresdefault.jpg"
-                alt=""
-              />
+              <Link to={`/watch/123123`} className="linktovideoonclick">
+                <img
+                  src="https://i.ytimg.com/vi/bIsp1K8eJG0/maxresdefault.jpg"
+                  alt=""
+                />
+              </Link>
               <div className="suggestionInfo">
                 <div className="suggestionTitle">
                   Does He Know Something We Don’t?
