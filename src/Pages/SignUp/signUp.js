@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import "./signUp.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import API from "../../api/api";
 
 const SignUp = () => {
   const navigate = useNavigate();
   const [preview, setPreview] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [signUpField, setSignUpField] = useState({
     channelName: "",
@@ -17,7 +19,9 @@ const SignUp = () => {
     profileImageUrl: "",
   });
 
-  // 🔹 Upload image to Cloudinary (TEST MODE)
+  /* ============================
+     CLOUDINARY UPLOAD (WORKING)
+     ============================ */
   const uploadImage = async (file) => {
     try {
       setUploading(true);
@@ -31,16 +35,46 @@ const SignUp = () => {
         data
       );
 
-      console.log("UPLOAD SUCCESS:", res.data.secure_url);
-
       setSignUpField((prev) => ({
         ...prev,
         profileImageUrl: res.data.secure_url,
       }));
     } catch (err) {
-      console.error("UPLOAD FAILED:", err.response?.data || err);
+      alert("Image upload failed");
+      console.error(err);
     } finally {
       setUploading(false);
+    }
+  };
+
+  /* ============================
+     SIGNUP → BACKEND
+     ============================ */
+  const handleSignup = async () => {
+    const { channelName, username, password } = signUpField;
+
+    if (!channelName || !username || !password) {
+      alert("Please fill all required fields");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      await API.post("/auth/signup", {
+        channelName: signUpField.channelName,
+        username: signUpField.username,
+        password: signUpField.password,
+        about: signUpField.about,
+        profileImage: signUpField.profileImageUrl, // ✅ URL, not file
+      });
+
+      alert("Account created successfully");
+      navigate("/");
+    } catch (err) {
+      alert(err.response?.data?.message || "Signup failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -114,16 +148,7 @@ const SignUp = () => {
                   const file = e.target.files[0];
                   if (!file) return;
 
-                  // preview
                   setPreview(URL.createObjectURL(file));
-
-                  // store file
-                  setSignUpField((prev) => ({
-                    ...prev,
-                    profileImage: file,
-                  }));
-
-                  // 🚀 upload immediately (TEST MODE)
                   uploadImage(file);
                 }}
               />
@@ -133,11 +158,18 @@ const SignUp = () => {
 
         {/* ACTIONS */}
         <div className="signUpActions">
-          <button className="signUpPrimary" onClick={() => navigate("/")}>
-            Sign up
+          <button
+            className="signUpPrimary"
+            onClick={handleSignup}
+            disabled={loading || uploading}
+          >
+            {loading ? "Creating..." : "Sign up"}
           </button>
 
-          <button className="signUpSecondary" onClick={() => navigate("/")}>
+          <button
+            className="signUpSecondary"
+            onClick={() => navigate("/")}
+          >
             Home page
           </button>
         </div>
