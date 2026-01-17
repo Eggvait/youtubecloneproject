@@ -13,7 +13,7 @@ const Login = ({ onClose }) => {
     password: "",
   });
 
-  // Lock scroll + ESC close
+  /* LOCK SCROLL + ESC CLOSE */
   useEffect(() => {
     document.body.style.overflow = "hidden";
 
@@ -31,22 +31,25 @@ const Login = ({ onClose }) => {
 
   const handleClose = () => {
     setIsClosing(true);
-    setTimeout(onClose, 220); // match CSS exit animation
+    setTimeout(onClose, 220);
   };
 
-  const handleOnChangeInput = (event, name) => {
-    setLoginField({ ...loginField, [name]: event.target.value });
+  const handleOnChangeInput = (e, name) => {
+    setLoginField((prev) => ({
+      ...prev,
+      [name]: e.target.value,
+    }));
   };
 
-  // 🔐 BACKEND LOGIN
+  /* 🔐 LOGIN */
   const handleLogin = async () => {
     try {
       const res = await API.post("/auth/login", loginField);
 
-      // Store JWT
+      // ✅ SAVE AUTH DATA
       localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      // Remember me flag (optional future use)
       if (rememberMe) {
         localStorage.setItem("rememberMe", "true");
       }
@@ -89,7 +92,6 @@ const Login = ({ onClose }) => {
             placeholder="Password"
           />
 
-          {/* Remember me */}
           <label className="rememberRow">
             <input
               type="checkbox"

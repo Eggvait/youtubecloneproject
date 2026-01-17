@@ -210,3 +210,16 @@
   transform: scale(0.96);
 }
 
+.profileSubscribedBtn {
+  background-color: #2a2a2a;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 18px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.profileSubscribedBtn:hover {
+  background-color: #3a3a3a;
+}

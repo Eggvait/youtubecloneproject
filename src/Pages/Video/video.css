@@ -365,3 +365,30 @@
   top: 80px;              /* navbar (56) + spacing */
   align-self: flex-start; /* critical for flex layouts */
 }
+
+/* COMMENT AVATARS (FIX SIZE ISSUE) */
+.commentInput img,
+.comment img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+
+.subscribedBtn {
+  background-color: #2a2a2a;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 18px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.subscribedBtn:hover {
+  background-color: #3a3a3a;
+}
+
+

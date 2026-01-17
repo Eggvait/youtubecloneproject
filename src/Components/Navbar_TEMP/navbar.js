@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./navbar.css";
 import MenuIcon from "@mui/icons-material/Menu";
 import YouTubeIcon from "@mui/icons-material/YouTube";
@@ -6,68 +6,99 @@ import SearchIcon from "@mui/icons-material/Search";
 import KeyboardVoiceIcon from "@mui/icons-material/KeyboardVoice";
 import VideoCallIcon from "@mui/icons-material/VideoCall";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import PersonIcon from "@mui/icons-material/Person";
-import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Login from "../Login/login";
 
+const DEFAULT_AVATAR =
+  "https://icon-library.com/images/user-icon-jpg/user-icon-jpg-29.jpg";
+
 const Navbar = ({ setSideNavbarFunc, sideNavbar }) => {
-  const [userPic, setUserPic] = useState(
-    "https://icon-library.com/images/user-icon-jpg/user-icon-jpg-29.jpg"
-  );
-  const [navbarModal, setNavbarModal] = useState(false);
-  const [login,setLogin] = useState(false);
   const navigate = useNavigate();
 
-  const handleClickModal = () => {
-    setNavbarModal((prev) => !prev);
+  const [navbarModal, setNavbarModal] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  /* ---------------- LOAD USER ---------------- */
+  const syncUserFromStorage = () => {
+    const storedUser = localStorage.getItem("user");
+    setUser(storedUser ? JSON.parse(storedUser) : null);
   };
 
-  const sideNavbarFunc = () => {
+  useEffect(() => {
+    syncUserFromStorage();
+
+    // sync across login/logout
+    window.addEventListener("storage", syncUserFromStorage);
+    return () => window.removeEventListener("storage", syncUserFromStorage);
+  }, []);
+
+  /* ---------------- HANDLERS ---------------- */
+
+  const toggleSidebar = () => {
     setSideNavbarFunc(!sideNavbar);
   };
 
-  const handleProfile = () => {
-    navigate("/user/324243");
-    setNavbarModal(false);
-  };
-
-  const onClickofPopupOption = (button) => {
-    setNavbarModal(false);
-    if(button === "login"){
-      setLogin(true);
-    }
-    else{
-
-    }
+  const toggleDropdown = () => {
+    setNavbarModal((prev) => !prev);
   };
 
   const closeLogin = () => {
-    setLogin(false);
+    setLoginOpen(false);
+    syncUserFromStorage(); // ⬅️ IMPORTANT
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setUser(null);
+    setNavbarModal(false);
+    navigate("/");
+  };
+
+  const handleProfile = () => {
+    setNavbarModal(false);
+    navigate(`/user/${user._id}`);
+  };
+
+  /* ---------------- SEARCH ---------------- */
+
+  const handleSearch = () => {
+    if (!searchQuery.trim()) return;
+    navigate(`/?search=${encodeURIComponent(searchQuery)}`);
+  };
+
+  const handleSearchKey = (e) => {
+    if (e.key === "Enter") handleSearch();
   };
 
   return (
     <div className="navbar">
+      {/* LEFT */}
       <div className="navbar-left">
-        <div className="navbarHamberger" onClick={sideNavbarFunc}>
+        <div className="navbarHamberger" onClick={toggleSidebar}>
           <MenuIcon sx={{ color: "white" }} />
         </div>
-        <Link to={"/"} className="navbar_youtubeimg">
-          <YouTubeIcon
-            sx={{ fontSize: "34px" }}
-            className="navbar_youtubeimage"
-          />
+
+        <Link to="/" className="navbar_youtubeimg">
+          <YouTubeIcon sx={{ fontSize: "34px", color: "red" }} />
           <div className="navbar_utubeTitle">YouTube</div>
         </Link>
       </div>
+
+      {/* MIDDLE */}
       <div className="navbar-middle">
         <div className="navbar_searchbox">
           <input
             type="text"
             className="navbar_searchBoxinput"
             placeholder="Search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={handleSearchKey}
           />
-          <div className="navbar_searchIcon">
+          <div className="navbar_searchIcon" onClick={handleSearch}>
             <SearchIcon sx={{ fontSize: "20px", color: "white" }} />
           </div>
         </div>
@@ -77,36 +108,54 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar }) => {
         </div>
       </div>
 
+      {/* RIGHT */}
+      {/* RIGHT */}
       <div className="navbar-right">
-        <Link to={'/23232323/upload'}>
-          <VideoCallIcon
-            sx={{ color: "white", fontSize: "30px", cursor: "pointer" }}
-          />
-        </Link>
-        <NotificationsIcon
-          sx={{ color: "white", fontSize: "30px", cursor: "pointer" }}
-        />
+        {/* ✅ Upload button — SAME as original behavior */}
+        {user && (
+          <Link to={`/${user._id}/upload`}>
+            <VideoCallIcon
+              sx={{ color: "white", fontSize: "30px", cursor: "pointer" }}
+            />
+          </Link>
+        )}
+
+        <NotificationsIcon sx={{ color: "white", fontSize: "30px" }} />
+
         <img
-          onClick={handleClickModal}
-          src={userPic}
+          src={user?.profileImage || DEFAULT_AVATAR}
           className="navbar-right-logo"
-          alt="logo"
+          onClick={toggleDropdown}
+          alt="avatar"
         />
 
         {navbarModal && (
-          <div className="navbar-modal">
-            <div className="navbar-modal-option" onClick={handleProfile}>
-              Profile
-            </div>
-            <div className="navbar-modal-option" onClick ={()=>onClickofPopupOption("logout")}>Logout</div>
-            <div className="navbar-modal-option" onClick ={()=>onClickofPopupOption("login")}>Login</div>
+          <div className="navbar-dropdown">
+            {user ? (
+              <>
+                <div className="dropdown-item" onClick={handleProfile}>
+                  Your channel
+                </div>
+                <div className="dropdown-item danger" onClick={handleLogout}>
+                  Sign out
+                </div>
+              </>
+            ) : (
+              <div
+                className="dropdown-item"
+                onClick={() => {
+                  setNavbarModal(false);
+                  setLoginOpen(true);
+                }}
+              >
+                Sign in
+              </div>
+            )}
           </div>
         )}
       </div>
 
-      {
-        login && <Login onClose={closeLogin} />
-      }
+      {loginOpen && <Login onClose={closeLogin} />}
     </div>
   );
 };

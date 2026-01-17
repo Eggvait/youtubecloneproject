@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import "./videoUpload.css";
-import { Link } from "react-router-dom";
-import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
+import API from "../../api/api";
 
 const VideoUpload = () => {
+  const navigate = useNavigate();
+
   const [thumbnailName, setThumbnailName] = useState("");
   const [videoName, setVideoName] = useState("");
   const [uploadingThumb, setUploadingThumb] = useState(false);
@@ -13,13 +15,12 @@ const VideoUpload = () => {
     title: "",
     description: "",
     category: "",
-    thumbnail: null,
-    video: null,
     thumbnailUrl: "",
     videoUrl: "",
   });
 
-  // 🔹 Upload thumbnail (image)
+  /* ---------- CLOUDINARY UPLOADS ---------- */
+
   const uploadThumbnail = async (file) => {
     try {
       setUploadingThumb(true);
@@ -28,25 +29,22 @@ const VideoUpload = () => {
       data.append("file", file);
       data.append("upload_preset", "youtube-clone");
 
-      const res = await axios.post(
+      const res = await fetch(
         "https://api.cloudinary.com/v1_1/du0hnwxpb/image/upload",
-        data
-      );
-
-      console.log("THUMBNAIL UPLOADED:", res.data.secure_url);
+        { method: "POST", body: data }
+      ).then((r) => r.json());
 
       setUploadField((prev) => ({
         ...prev,
-        thumbnailUrl: res.data.secure_url,
+        thumbnailUrl: res.secure_url,
       }));
     } catch (err) {
-      console.error("THUMBNAIL UPLOAD FAILED:", err.response?.data || err);
+      alert("Thumbnail upload failed");
     } finally {
       setUploadingThumb(false);
     }
   };
 
-  // 🔹 Upload video
   const uploadVideo = async (file) => {
     try {
       setUploadingVideo(true);
@@ -55,30 +53,46 @@ const VideoUpload = () => {
       data.append("file", file);
       data.append("upload_preset", "youtube-video");
 
-      const res = await axios.post(
+      const res = await fetch(
         "https://api.cloudinary.com/v1_1/du0hnwxpb/video/upload",
-        data
-      );
-
-      console.log("VIDEO UPLOADED:", res.data.secure_url);
+        { method: "POST", body: data }
+      ).then((r) => r.json());
 
       setUploadField((prev) => ({
         ...prev,
-        videoUrl: res.data.secure_url,
+        videoUrl: res.secure_url,
       }));
     } catch (err) {
-      console.error("VIDEO UPLOAD FAILED:", err.response?.data || err.message);
+      alert("Video upload failed");
     } finally {
       setUploadingVideo(false);
     }
   };
 
-  console.log("UPLOAD STATE:", uploadField);
+  /* ---------- FINAL BACKEND UPLOAD ---------- */
+
+  const handleFinalUpload = async () => {
+    if (
+      !uploadField.title ||
+      !uploadField.thumbnailUrl ||
+      !uploadField.videoUrl
+    ) {
+      alert("Please complete all required fields");
+      return;
+    }
+
+    try {
+      await API.post("/video", uploadField);
+      alert("Video uploaded successfully!");
+      navigate("/");
+    } catch (err) {
+      alert(err.response?.data?.message || "Upload failed");
+    }
+  };
 
   return (
     <div className="uploadPage">
       <div className="uploadCard">
-        {/* HEADER */}
         <div className="uploadHeader">
           <img
             src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg"
@@ -87,12 +101,10 @@ const VideoUpload = () => {
           <h2>Upload Video</h2>
         </div>
 
-        {/* FORM */}
         <div className="uploadForm">
           <input
-            type="text"
-            placeholder="Title of video"
             className="uploadInput"
+            placeholder="Title"
             value={uploadField.title}
             onChange={(e) =>
               setUploadField({ ...uploadField, title: e.target.value })
@@ -100,93 +112,65 @@ const VideoUpload = () => {
           />
 
           <textarea
-            rows="4"
-            placeholder="Description"
             className="uploadTextarea"
+            placeholder="Description"
+            rows={4}
             value={uploadField.description}
             onChange={(e) =>
-              setUploadField({
-                ...uploadField,
-                description: e.target.value,
-              })
+              setUploadField({ ...uploadField, description: e.target.value })
             }
           />
 
           <input
-            type="text"
-            placeholder="Category"
             className="uploadInput"
+            placeholder="Category"
             value={uploadField.category}
             onChange={(e) =>
-              setUploadField({
-                ...uploadField,
-                category: e.target.value,
-              })
+              setUploadField({ ...uploadField, category: e.target.value })
             }
           />
 
-          {/* THUMBNAIL */}
           <div className="uploadFileRow">
-            <label>Thumbnail</label>
-
             <label className="fileButton">
               {uploadingThumb ? "Uploading..." : "Choose thumbnail"}
               <input
                 type="file"
-                accept="image/*"
                 hidden
+                accept="image/*"
                 onChange={(e) => {
                   const file = e.target.files[0];
                   if (!file) return;
-
                   setThumbnailName(file.name);
-                  setUploadField((prev) => ({
-                    ...prev,
-                    thumbnail: file,
-                  }));
-
-                  // 🚀 TEST MODE upload
                   uploadThumbnail(file);
                 }}
               />
             </label>
-
-            {thumbnailName && <span className="fileName">{thumbnailName}</span>}
+            {thumbnailName && <span>{thumbnailName}</span>}
           </div>
 
-          {/* VIDEO */}
           <div className="uploadFileRow">
-            <label>Video</label>
-
             <label className="fileButton">
               {uploadingVideo ? "Uploading..." : "Choose video"}
               <input
                 type="file"
-                accept="video/*"
                 hidden
+                accept="video/*"
                 onChange={(e) => {
                   const file = e.target.files[0];
                   if (!file) return;
-
                   setVideoName(file.name);
-                  setUploadField((prev) => ({
-                    ...prev,
-                    video: file,
-                  }));
-
-                  // 🚀 TEST MODE upload
                   uploadVideo(file);
                 }}
               />
             </label>
-
-            {videoName && <span className="fileName">{videoName}</span>}
+            {videoName && <span>{videoName}</span>}
           </div>
 
-          {/* ACTIONS */}
           <div className="uploadActions">
-            <button className="uploadBtn">Upload</button>
-            <Link to={"/"}>
+            <button className="uploadBtn" onClick={handleFinalUpload}>
+              Upload
+            </button>
+            <Link to="/">
               <button className="cancelBtn">Home</button>
             </Link>
           </div>

@@ -39,7 +39,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home sideNavbar={sideNavbar} />} />
 
-        <Route path="/watch/:id" element={<Video />} />
+        <Route path="/video/:id" element={<Video />} />
 
         <Route
           path="/user/:id"

@@ -1,152 +1,235 @@
-import React, { useState } from 'react'
-import './video.css'
-import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined'
-import ThumbDownAltOutlinedIcon from '@mui/icons-material/ThumbDownAltOutlined'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from "react";
+import "./video.css";
+import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
+import ThumbDownAltOutlinedIcon from "@mui/icons-material/ThumbDownAltOutlined";
+import { Link, useParams } from "react-router-dom";
+import API from "../../api/api";
 
 const Video = () => {
-  const [showMore, setShowMore] = useState(false)
-  const [commentFocus, setCommentFocus] = useState(false)
+  const { id } = useParams();
+
+  const [video, setVideo] = useState(null);
+  const [suggestions, setSuggestions] = useState([]);
+  const [comments, setComments] = useState([]);
   const [comment, setComment] = useState("");
-  console.log(comment);
+  const [commentFocus, setCommentFocus] = useState(false);
+  const [showMore, setShowMore] = useState(false);
+
+  const [user, setUser] = useState(null);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+
+  /* ---------------- LOAD USER ---------------- */
+  useEffect(() => {
+    const stored = localStorage.getItem("user");
+    if (stored) setUser(JSON.parse(stored));
+  }, []);
+
+  /* ---------------- FETCH VIDEO ---------------- */
+  useEffect(() => {
+    const fetchAll = async () => {
+      const videoRes = await API.get(`/video/${id}`);
+      setVideo(videoRes.data);
+
+      await API.post(`/video/${id}/view`);
+
+      const commentsRes = await API.get(`/comment/${id}`);
+      setComments(commentsRes.data);
+
+      const suggestionsRes = await API.get("/video");
+      setSuggestions(suggestionsRes.data.filter((v) => v._id !== id));
+
+      if (user) {
+        setIsSubscribed(
+          user.subscribedUsers?.includes(videoRes.data.userId._id),
+        );
+      }
+    };
+
+    fetchAll();
+  }, [id, user]);
+
+  /* ---------------- ACTIONS ---------------- */
+
+  const toggleSubscribe = async () => {
+    if (!user) return;
+
+    if (isSubscribed) {
+      await API.post(`/auth/${video.userId._id}/unsubscribe`);
+    } else {
+      await API.post(`/auth/${video.userId._id}/subscribe`);
+    }
+
+    // Refresh video data
+    const updatedVideo = await API.get(`/video/${id}`);
+    setVideo(updatedVideo.data);
+
+    // Safe user update
+    const updatedUser = {
+      ...user,
+      subscribedUsers: user.subscribedUsers || [],
+    };
+
+    if (isSubscribed) {
+      updatedUser.subscribedUsers = updatedUser.subscribedUsers.filter(
+        (uid) => uid !== video.userId._id,
+      );
+    } else {
+      updatedUser.subscribedUsers.push(video.userId._id);
+    }
+
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+    setUser(updatedUser);
+    setIsSubscribed(!isSubscribed);
+  };
+
+  const likeVideo = async () => {
+    await API.post(`/video/${id}/like`);
+    const res = await API.get(`/video/${id}`);
+    setVideo(res.data);
+  };
+
+  const dislikeVideo = async () => {
+    await API.post(`/video/${id}/dislike`);
+    const res = await API.get(`/video/${id}`);
+    setVideo(res.data);
+  };
+
+  const addComment = async () => {
+    if (!comment.trim()) return;
+
+    await API.post("/comment", { videoId: id, text: comment });
+
+    setComment("");
+    setCommentFocus(false);
+
+    const res = await API.get(`/comment/${id}`);
+    setComments(res.data);
+  };
+
+  if (!video) return null;
 
   return (
     <div className="videoPage">
-
       <div className="videoLayout">
-
         {/* LEFT */}
         <div className="videoMain">
-
-          {/* VIDEO */}
           <div className="videoPlayer">
             <video controls autoPlay className="videoPlayer_video">
-              <source
-                src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-                type="video/mp4"
-              />
+              <source src={video.videoUrl} type="video/mp4" />
             </video>
           </div>
 
-          {/* TITLE */}
-          <h1 className="videoTitle">Big Buck Bunny</h1>
+          <h1 className="videoTitle">{video.title}</h1>
 
-          {/* ACTION BAR */}
           <div className="videoActions">
             <div className="videoActions_left">
-              <Link to="/user/3434" className="imagechannellinkclick">
+              <Link to={`/user/${video.userId._id}`}>
                 <img
-                  src="https://i.pinimg.com/564x/4a/5a/47/4a5a474b6f42f265d7f003575ef34b75.jpg"
-                  alt=""
+                  src={video.userId.profileImage}
                   className="videoChannelImg"
                 />
               </Link>
+
               <div className="videoChannelInfo">
-                <div className="videoChannelName">User1</div>
-                <div className="videoChannelSubs">1.2M subscribers</div>
+                <div className="videoChannelName">
+                  {video.userId.channelName}
+                </div>
+                <div className="videoChannelSubs">
+                  {video.userId.subscribers} subscribers
+                </div>
               </div>
-              <button className="subscribeBtn">Subscribe</button>
+
+              {user && user._id !== video.userId._id && (
+                <button
+                  className={isSubscribed ? "subscribedBtn" : "subscribeBtn"}
+                  onClick={toggleSubscribe}
+                >
+                  {isSubscribed ? "Subscribed" : "Subscribe"}
+                </button>
+              )}
             </div>
 
-            {/* LIKE / DISLIKE — UNCHANGED */}
             <div className="youtube_video_likeBlock">
-              <div className="youtube_video_likeIcon">
-                <ThumbUpAltOutlinedIcon sx={{ color: 'white', fontSize: 20 }} />
-                <div className="youtubevideoNoOfLikes">123K</div>
+              <div onClick={likeVideo} className="youtube_video_likeIcon">
+                <ThumbUpAltOutlinedIcon sx={{ color: "white", fontSize: 20 }} />
+                <div>{video.likes.length}</div>
               </div>
-              <div className="youtubeVideoDivider"></div>
-              <div className="youtube_video_likeIcon">
-                <ThumbDownAltOutlinedIcon sx={{ color: 'white', fontSize: 20 }} />
+              <div className="youtubeVideoDivider" />
+              <div onClick={dislikeVideo} className="youtube_video_likeIcon">
+                <ThumbDownAltOutlinedIcon
+                  sx={{ color: "white", fontSize: 20 }}
+                />
               </div>
             </div>
           </div>
 
-          {/* DESCRIPTION */}
           <div className="videoDescription">
             <div className="videoDescription_stats">
-              1.2M views • Jan 1, 2025
+              {video.views} views • {new Date(video.createdAt).toDateString()}
             </div>
-            <p className={showMore ? 'expanded' : 'clamped'}>
-              Big Buck Bunny tells the story of a giant rabbit with a heart bigger
-              than himself. When the forest bullies gang up on him, he decides to
-              teach them a lesson. This is one of Blender’s most famous open
-              movies and still holds up visually.
+
+            <p className={showMore ? "expanded" : "clamped"}>
+              {video.description}
             </p>
-            <span
-              className="readMore"
-              onClick={() => setShowMore(!showMore)}
-            >
-              {showMore ? 'Show less' : 'Read more'}
+
+            <span className="readMore" onClick={() => setShowMore(!showMore)}>
+              {showMore ? "Show less" : "Read more"}
             </span>
           </div>
 
-          {/* COMMENTS */}
           <div className="videoComments">
-            <h3>1,248 Comments</h3>
+            <h3>{comments.length} Comments</h3>
 
-            <div className="commentInput">
-              <img src="https://i.pravatar.cc/40" alt="" />
-              <div className="commentBox">
-                <input
-                  type="text"
-                  placeholder="Add a comment..."
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  onFocus={() => setCommentFocus(true)}
-                />
-                {commentFocus && (
-                  <div className="commentActions">
-                    <button
-                      className="cancelBtn"
-                      onClick={() => setCommentFocus(false)}
-                    >
-                      Cancel
-                    </button>
-                    <button className="commentBtn">Comment</button>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="comment">
-              <img src="https://i.pravatar.cc/41" alt="" />
-              <div>
-                <div className="commentName">RandomUser</div>
-                <div className="commentText">
-                  This animation still holds up so well!
+            {user && (
+              <div className="commentInput">
+                <img src={user.profileImage} />
+                <div className="commentBox">
+                  <input
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    onFocus={() => setCommentFocus(true)}
+                    placeholder="Add a comment..."
+                  />
+                  {commentFocus && (
+                    <div className="commentActions">
+                      <button onClick={() => setCommentFocus(false)}>
+                        Cancel
+                      </button>
+                      <button onClick={addComment}>Comment</button>
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
+            )}
+
+            {comments.map((c) => (
+              <div key={c._id} className="comment">
+                <img src={c.userId.profileImage} />
+                <div>
+                  <div className="commentName">{c.userId.channelName}</div>
+                  <div className="commentText">{c.text}</div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
         {/* RIGHT */}
         <div className="videoSuggestions">
           <h4>Up next</h4>
-
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => (
-            <div key={i} className="suggestionCard">
-              <Link to={`/watch/123123`} className="linktovideoonclick">
-                <img
-                  src="https://i.ytimg.com/vi/bIsp1K8eJG0/maxresdefault.jpg"
-                  alt=""
-                />
-              </Link>
-              <div className="suggestionInfo">
-                <div className="suggestionTitle">
-                  Does He Know Something We Don’t?
-                </div>
-                <div className="suggestionMeta">
-                  Channel Name • 1.2M views
-                </div>
+          {suggestions.map((v) => (
+            <Link key={v._id} to={`/video/${v._id}`} className="suggestionCard">
+              <img src={v.thumbnailUrl} />
+              <div>
+                <div>{v.title}</div>
+                <div>{v.userId.channelName}</div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
-
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Video
+export default Video;
