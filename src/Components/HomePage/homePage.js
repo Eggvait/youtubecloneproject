@@ -1,12 +1,33 @@
 import React, { useEffect, useState } from "react";
 import "./homePage.css";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import API from "../../api/api";
 
 const HomePage = ({ sideNavbar }) => {
   const [videos, setVideos] = useState([]);
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const searchQuery = searchParams.get("search");
 
   const options = [
+    "All",
+    "Music",
+    "Sports",
+    "Gaming",
+    "News",
+    "Movies",
+    "Fashion",
+    "Learning",
+    "Live",
+    "All",
+    "Music",
+    "Sports",
+    "Gaming",
+    "News",
+    "Movies",
+    "Fashion",
+    "Learning",
+    "Live",
     "All",
     "Music",
     "Sports",
@@ -22,15 +43,19 @@ const HomePage = ({ sideNavbar }) => {
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        const res = await API.get("/video");
+        const url = searchQuery
+          ? `/video?search=${encodeURIComponent(searchQuery)}`
+          : "/video";
+
+        const res = await API.get(url);
         setVideos(res.data);
       } catch (err) {
-        console.error("Failed to fetch videos", err);
+        console.error("Failed to load videos", err);
       }
     };
 
     fetchVideos();
-  }, []);
+  }, [searchQuery]);
 
   /* ---------------- TIME FORMAT ---------------- */
   const timeAgo = (date) => {
@@ -91,9 +116,7 @@ const HomePage = ({ sideNavbar }) => {
               />
 
               <div className="youtube_textInfo">
-                <div className="youtube_videoTitle">
-                  {video.title}
-                </div>
+                <div className="youtube_videoTitle">{video.title}</div>
 
                 <div className="youtube_channelName">
                   {video.userId?.channelName || "Unknown Channel"}
